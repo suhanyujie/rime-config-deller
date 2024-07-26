@@ -1,6 +1,6 @@
 # rime config deller
 
-rime 输入法，额外的方案配置删除工具
+rime 输入法，额外方案的配置管理（删除）工具
 
 ## ref
 
