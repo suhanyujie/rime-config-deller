@@ -18,6 +18,8 @@ class Deller:
         path = Path(rime_user_dir)
         self.files = [str(file) for file in path.iterdir() if file.is_file()]
         self.dirs = [str(file) for file in path.iterdir() if file.is_dir()]
+
+        self.init_schema_list()
         pass
 
     def init_schema_list(self):
@@ -32,7 +34,15 @@ class Deller:
             (tmp_schema_id, tmp_schema_name) = self.get_schema_id_name_by_file(
                 schema_file
             )
-            tmp_schema_obj = RimeSchema(tmp_schema_id, self.files, self.dirs)
+            if len(self.files) < 1:
+                print("文件列表未找到：", tmp_schema_id)
+                continue
+            tmp_schema_obj = RimeSchema(
+                schema_id=tmp_schema_id,
+                file_list=self.files,
+                dir_list=self.dirs,
+                schema_nick_name=tmp_schema_name,
+            )
             schema_list.append(tmp_schema_obj)
             schema_map[tmp_schema_id] = tmp_schema_obj
         self.schema_list = schema_list
@@ -76,29 +86,35 @@ class Deller:
             return (schema_id, schema_name)
         return (schema_id, schema_name)
 
-    def get_schema_name_list(self) -> Dict[str, str]:
-        pass
+    def get_schema_name_list(self) -> List[Dict[str, str]]:
+        list = []
+        for tmp_name in self.schema_map_keyby_id.keys():
+            item = self.schema_map_keyby_id[tmp_name]
+            one = {tmp_name: item.get_schema_nick_name()}
+            list.append(one)
+        return list
 
 
 class RimeSchema:
     def __init__(
         self,
         schema_id="",
+        schema_nick_name="",
         file_list=[],
         dir_list=[],
     ) -> None:
         self.name = schema_id
-        self.nick_name = ""
+        self.nick_name = schema_nick_name
         self.schema_file = ""
         self.relate_files = []
         self.relate_dirs = []
 
         self.yaml_files = []
         self.schema_files = []
-
-        self.init_file_list()
         self.file_list = file_list
         self.dir_list = dir_list
+
+        self.init_file_list()
         pass
 
     def init_file_list(self):
@@ -120,9 +136,9 @@ class RimeSchema:
                 if self.name + "." in tmp:
                     self.relate_dirs.append(tmp)
         except Exception as e:
-            print(f"An error occurred: {e}")
+            print(f"[10001] An error occurred: {e}")
 
-    def delete(self, include_dir = False):
+    def delete(self, include_dir=False):
         if len(self.relate_files) <= 0:
             return
         for tmp in self.relate_files:
@@ -132,8 +148,8 @@ class RimeSchema:
                 os.removedirs(dir)
         pass
 
-    def get_schema_name(self):
-        pass
+    def get_schema_nick_name(self) -> str:
+        return self.nick_name
 
 
 def get_rime_user_dir() -> str:
@@ -148,11 +164,9 @@ def get_rime_user_dir() -> str:
 
 
 # 示例用法
-rime_user_dir = "D:\programData\Rime1"
-deller = Deller(rime_user_dir)
-deller.list_files_in_directory(rime_user_dir)
-# print("Files in directory:", files)
-
-# ['D:\\programData\\Rime1\\double_pinyin.schema.yaml', 'D:\\programData\\Rime1\\double_pinyin_abc.schema.yaml', 'D:\\programData\\Rime1\\double_pinyin_flypy.schema.yaml', 'D:\\programData\\Rime1\\double_pinyin_mspy.schema.yaml', 'D:\\programData\\Rime1\\double_pinyin_sogou.schema.yaml', 'D:\\programData\\Rime1\\double_pinyin_ziguang.schema.yaml', 'D:\\programData\\Rime1\\japanese.schema.yaml', 'D:\\programData\\Rime1\\melt_eng.schema.yaml', 'D:\\programData\\Rime1\\radical_pinyin.schema.yaml', 'D:\\programData\\Rime1\\radical_pinyin_flypy.schema.yaml', 'D:\\programData\\Rime1\\rime_mint.schema.yaml', 'D:\\programData\\Rime1\\rime_mint_flypy.schema.yaml', 'D:\\programData\\Rime1\\stroke.schema.yaml', 'D:\\programData\\Rime1\\t9.schema.yaml', 'D:\\programData\\Rime1\\terra_pinyin.schema.yaml', 'D:\\programData\\Rime1\\wubi86_jidian.schema.yaml', 'D:\\programData\\Rime1\\wubi98_mint.schema.yaml']
-res = deller.get_schema_id_name_by_file("D:\\programData\\Rime1\\rime_mint.schema.yaml")
-print(res)
+# rime_user_dir = "D:\programData\Rime1"
+# deller = Deller(rime_user_dir)
+# deller.list_files_in_directory(rime_user_dir)
+# # print("Files in directory:", files)
+# res = deller.get_schema_id_name_by_file("D:\\programData\\Rime1\\rime_mint.schema.yaml")
+# print(res)

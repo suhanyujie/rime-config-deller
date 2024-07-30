@@ -2,6 +2,8 @@
 
 from PyQt6.QtCore import Qt
 from PyQt6.QtWidgets import QApplication, QMainWindow, QWidget, QHBoxLayout, QTextEdit
+
+from app.ui.widgets.schema_list_widget import SchemaListWidget
 from ..utils.config import AppConfig
 from .widgets.menubar import MenuBar
 from .widgets.toolbar import ToolBar
@@ -44,8 +46,9 @@ class MainWindow(QMainWindow):
         self.setStatusBar(StatusBar(self))
 
         layout.addWidget(self.treeview)
-        layout.addWidget(self.editbox, stretch=1)
-        layout.addWidget(self.editbox)
+        layout.addWidget(self.create_rime_list_view(), stretch=1)
+        # layout.addWidget(self.editbox, stretch=1)
+        # layout.addWidget(self.editbox)
 
     def create_toolbars(self) -> None:
         """
@@ -100,6 +103,12 @@ class MainWindow(QMainWindow):
         Creates and adds the tree view widget to the main window.
         """
         return TreeView(self)
+
+    def create_rime_list_view(self) -> QWidget:
+        """
+        Creates and adds the QTextEdit widget to the main window.
+        """
+        return SchemaListWidget()
 
     def create_edit(self) -> QTextEdit:
         """
