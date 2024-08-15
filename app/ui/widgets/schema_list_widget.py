@@ -47,10 +47,15 @@ class SchemaListWidget(QWidget):
         container_layout.setDirection(QBoxLayout.Direction.TopToBottom)
         # 创建复选框并添加到容器布局中
         self.checkboxes = []
+        ignore_id_list = self.deller.get_ignore_list()
         for item_dict in self.list:
             for tmp_id in item_dict.keys():
                 checkbox = QCheckBox(tmp_id)
                 checkbox.setText(item_dict[tmp_id])
+                checkbox.pri_value = tmp_id
+                if tmp_id in ignore_id_list:
+                    checkbox.setDisabled(True)
+                    checkbox.setStyleSheet("QCheckBox:disabled { color: gray; }")
                 container_layout.addWidget(checkbox)
                 checkbox.setSizePolicy(
                     QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Minimum
@@ -69,7 +74,7 @@ class SchemaListWidget(QWidget):
         self.setLayout(layout)
 
     def get_checked_items(self):
-        return [checkbox.text() for checkbox in self.checkboxes if checkbox.isChecked()]
+        return [checkbox for checkbox in self.checkboxes if checkbox.isChecked()]
 
     def set_hr_line(self, container_layout: QVBoxLayout):
         line = QFrame()
@@ -84,11 +89,19 @@ class SchemaListWidget(QWidget):
         container_layout.addWidget(submit_button)
 
     def submit(self):
-        checked_items = self.get_checked_items()
-        for tmp_id in checked_items:
+        checked_checkbox_arr = self.get_checked_items()
+        checked_item_ids = []
+        checked_item_names = []
+        ignore_ids = self.deller.get_ignore_list()
+        for item in checked_checkbox_arr:
+            tmp_id = item.pri_value
+            if tmp_id in ignore_ids:
+                continue
+            checked_item_names.append(item.text())
             if tmp_id not in self.deller.schema_map_keyby_id:
                 continue
-            tmp_schema = self.deller.schema_map_keyby_id[tmp_id]
-            print("找到要删除的 schema: ", tmp_schema.nick_name)
-        print(checked_items, "删除文件")
+            checked_item_ids.append(tmp_id)
+            # tmp_schema = self.deller.schema_map_keyby_id[tmp_id]
+        print("删除方案 name 列表", checked_item_names)
+        print("删除方案 id 列表", checked_item_ids)
         pass

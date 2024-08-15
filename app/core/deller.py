@@ -3,6 +3,7 @@ from pathlib import Path
 import os
 import yaml
 import winreg
+from .using_schema import UsingSchema
 
 
 class Deller:
@@ -93,6 +94,19 @@ class Deller:
             one = {tmp_id: item.get_schema_nick_name()}
             list.append(one)
         return list
+
+    def get_using_shcema_file(self) -> str:
+        default_file = UsingSchema.default_schema_file
+        for f in self.files:
+            tmp_base_name = os.path.basename(f)
+            if UsingSchema.default_schema_file in tmp_base_name:
+                default_file = f
+                break
+        return default_file
+
+    def get_ignore_list(self) -> List[str]:
+        usingScheObj = UsingSchema(self.get_using_shcema_file())
+        return usingScheObj.get_ingore_list()
 
 
 class RimeSchema:
