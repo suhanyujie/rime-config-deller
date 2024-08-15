@@ -1,25 +1,26 @@
 """app/ui/main_window.py"""
 
 from PyQt6.QtCore import Qt
-from PyQt6.QtWidgets import QApplication, QMainWindow, QWidget, QHBoxLayout, QTextEdit
+from PyQt6.QtWidgets import (
+    QApplication,
+    QMainWindow,
+    QWidget,
+    QHBoxLayout,
+    QTextEdit,
+    QToolBar,
+)
+from PyQt6.QtGui import QIcon, QAction
 
 from app.ui.widgets.schema_list_widget import SchemaListWidget
 from ..utils.config import AppConfig
 from .widgets.menubar import MenuBar
-from .widgets.toolbar import ToolBar
+from .widgets.toolbar import ToolBar, get_separator
 from .widgets.statusbar import StatusBar
 from .widgets.treeview import TreeView
 from ..core.deller import get_rime_user_dir
 
 
 class MainWindow(QMainWindow):
-    """
-    MainWindow
-
-    Args:
-        QMainWindow (QMainWindow): Inheritance
-    """
-
     def __init__(self) -> None:
         """
         Initialize the Main-Window.
@@ -31,49 +32,63 @@ class MainWindow(QMainWindow):
         self.center()
         central_widget = QWidget(self)
         self.setCentralWidget(central_widget)
-
-        layout = QHBoxLayout(central_widget)
+        layout = QHBoxLayout()
         central_widget.setLayout(layout)
 
         # Create Widgets
         self.treeview = self.create_treeview()
         self.editbox = self.create_edit()
 
-        self.create_toolbars()
-
         # Add Widgets to Window
-        self.setMenuBar(MenuBar(self))
-        self.setStatusBar(StatusBar(self))
+        # self.setMenuBar(MenuBar(self))
+        # self.setStatusBar(StatusBar(self))
+        self.top_toolbar = self.addToolBar("Open")
+        self.top_toolbar_add_button()
+
+        # layout.addWidget(get_separator(self))
 
         layout.addWidget(self.treeview)
-        layout.addWidget(self.create_rime_list_view(), stretch=1)
+        layout.addWidget(self.create_rime_list_view())
         # layout.addWidget(self.editbox, stretch=1)
         # layout.addWidget(self.editbox)
+
+    def top_toolbar_add_button(self):
+        # 创建并添加新建操作按钮
+        new_action = QAction(QIcon("new_icon.png"), "Open", self)
+        new_action.setShortcut("Ctrl+O")
+        new_action.setStatusTip("open dir")
+        new_action.triggered.connect(self.open_file)
+        self.top_toolbar.addAction(new_action)
+        pass
 
     def create_toolbars(self) -> None:
         """
         Creates and adds the top and right toolbars to the main window.
         """
+        self.set_top_bar()
+
+    def set_top_bar(self):
         # Top Toolbar [PyQt6.QtWidgets.QToolBar]
         self.topbar = ToolBar(
             self,
             orientation=Qt.Orientation.Horizontal,
             style=Qt.ToolButtonStyle.ToolButtonTextUnderIcon,
-            icon_size=(24, 24),
+            icon_size=(44, 44),
         )
-
         # Top Toolbar Buttons
         self.topbar.add_button(
             "Open", "resources/assets/icons/windows/imageres-10.ico", self.open_file
         )
-        self.topbar.add_button(
-            "Save", "resources/assets/icons/windows/shell32-259.ico", self.save_file
-        )
-        self.topbar.add_separator()
-        self.topbar.add_button(
-            "Exit", "resources/assets/icons/windows/shell32-220.ico", self.exit_app
-        )
+        # self.topbar.add_button(
+        #     "Save", "resources/assets/icons/windows/shell32-259.ico", self.save_file
+        # )
+        # self.topbar.add_button(
+        #     "Exit", "resources/assets/icons/windows/shell32-220.ico", self.exit_app
+        # )
+        pass
 
+    # しばらく、いらない
+    def set_right_bar(self):
         # Right Toolbar [PyQt6.QtWidgets.QToolBar]
         self.rightbar = ToolBar(
             self,

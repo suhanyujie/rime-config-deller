@@ -23,6 +23,7 @@ class TreeView(QTreeView):
         self.setModel(self.file_system_model)
         self.setRootIndex(self.file_system_model.index(default_dir))
         self.setFixedWidth(300)
+        # 隐藏多余的列
         self.setSortingEnabled(False)
         self.setColumnHidden(1, True)
         self.setColumnHidden(2, True)

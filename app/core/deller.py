@@ -88,9 +88,9 @@ class Deller:
 
     def get_schema_name_list(self) -> List[Dict[str, str]]:
         list = []
-        for tmp_name in self.schema_map_keyby_id.keys():
-            item = self.schema_map_keyby_id[tmp_name]
-            one = {tmp_name: item.get_schema_nick_name()}
+        for tmp_id in self.schema_map_keyby_id.keys():
+            item = self.schema_map_keyby_id[tmp_id]
+            one = {tmp_id: item.get_schema_nick_name()}
             list.append(one)
         return list
 

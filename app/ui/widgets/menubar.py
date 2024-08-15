@@ -1,4 +1,5 @@
-''' app/ui/widgets/menubar.py '''
+"""app/ui/widgets/menubar.py"""
+
 from PyQt6.QtWidgets import QMenuBar
 
 
@@ -18,6 +19,6 @@ class MenuBar(QMenuBar):
         # help_menu = self.addMenu("Help")
 
         # Add actions to the menus
-        file_menu.addAction(self.parent().topbar.actions_call["Open"]) # type: ignore
-        file_menu.addAction(self.parent().topbar.actions_call["Save"]) # type: ignore
-        file_menu.addAction(self.parent().topbar.actions_call["Exit"]) # type: ignore
+        file_menu.addAction(self.parent().topbar.actions_call["Open"])  # type: ignore
+        # file_menu.addAction(self.parent().topbar.actions_call["Save"])  # type: ignore
+        # file_menu.addAction(self.parent().topbar.actions_call["Exit"])  # type: ignore

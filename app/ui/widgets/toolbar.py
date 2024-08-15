@@ -1,7 +1,8 @@
-''' app/ui/widgets/toolbar.py '''
+"""app/ui/widgets/toolbar.py"""
+
 from PyQt6.QtCore import Qt, QSize
 from PyQt6.QtGui import QAction, QIcon
-from PyQt6.QtWidgets import QToolBar, QWidget, QSizePolicy
+from PyQt6.QtWidgets import QToolBar, QWidget, QSizePolicy, QMainWindow
 
 
 class ToolBar(QToolBar):
@@ -15,14 +16,20 @@ class ToolBar(QToolBar):
         icon_size: The toolbar's icon size.
     """
 
-    def __init__(self, parent,
-                 orientation: Qt.Orientation = Qt.Orientation.Horizontal,
-                 style: Qt.ToolButtonStyle = Qt.ToolButtonStyle.ToolButtonTextUnderIcon,
-                 icon_size: tuple[int, int] = (32, 32)) -> None:
+    def __init__(
+        self,
+        parent: QMainWindow,
+        orientation: Qt.Orientation = Qt.Orientation.Horizontal,
+        style: Qt.ToolButtonStyle = Qt.ToolButtonStyle.ToolButtonTextUnderIcon,
+        icon_size: tuple[int, int] = (32, 32),
+        tool_bar_name="文件",
+    ) -> None:
         super().__init__(parent)
+        self.toolbar = parent.addToolBar(tool_bar_name)
+        self.main_parent = parent
+
         self.actions_call = {}
         self.setOrientation(orientation)
-
         self.setToolButtonStyle(style)
         self.setIconSize(QSize(icon_size[0], icon_size[1]))
 
@@ -37,7 +44,7 @@ class ToolBar(QToolBar):
         """
         self.actions_call[text] = QAction(QIcon(icon), text, self)
         self.actions_call[text].triggered.connect(trigger_action)
-        self.addAction(self.actions_call[text])
+        self.toolbar.addAction(self.actions_call[text])
 
     def add_separator(self) -> None:
         """
@@ -45,5 +52,12 @@ class ToolBar(QToolBar):
         """
         separator = QWidget(self)
         separator.setSizePolicy(
-            QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
-        self.addWidget(separator)
+            QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding
+        )
+        self.toolbar.addWidget(separator)
+
+
+def get_separator(w: QWidget):
+    separator = QWidget(w)
+    separator.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
+    return separator
