@@ -25,6 +25,8 @@ class SchemaListWidget(QWidget):
         self.msg_box = QLabel(self)
         self.initData()
         self.initUI()
+        self.checkbox_group
+        self.container
 
     def initData(self):
         deller = Deller(get_rime_user_dir())
@@ -33,10 +35,9 @@ class SchemaListWidget(QWidget):
         pass
 
     def initUI(self):
-        layout = QVBoxLayout()
-
         # 添加标题
         self.show_normal_info()
+        layout = QVBoxLayout()
         layout.addWidget(self.msg_box)
         layout.addWidget(QLabel("输入法方案列表:"))
 
@@ -46,9 +47,21 @@ class SchemaListWidget(QWidget):
 
         # 创建一个容器窗口，放置复选框
         container = QWidget()
-        container_layout = QVBoxLayout()
-        container_layout.setSpacing(1)
-        container_layout.setDirection(QBoxLayout.Direction.TopToBottom)
+        self.container = container
+        self.checkbox_group = self.render_checkbox_list()
+        self.set_hr_line(self.checkbox_group)
+        self.set_button(self.checkbox_group)
+
+        container.setLayout(self.checkbox_group)
+        scroll_area.setWidget(container)
+
+        layout.addWidget(scroll_area)
+        self.setLayout(layout)
+
+    def render_checkbox_list(self) -> QVBoxLayout:
+        checkbox_group = QVBoxLayout()
+        checkbox_group.setSpacing(1)
+        checkbox_group.setDirection(QBoxLayout.Direction.TopToBottom)
         # 创建复选框并添加到容器布局中
         self.checkboxes = []
         ignore_id_list = self.deller.get_ignore_list()
@@ -60,28 +73,21 @@ class SchemaListWidget(QWidget):
                 if tmp_id in ignore_id_list:
                     checkbox.setDisabled(True)
                     checkbox.setStyleSheet("QCheckBox:disabled { color: gray; }")
-                container_layout.addWidget(checkbox)
+                checkbox_group.addWidget(checkbox)
                 checkbox.setSizePolicy(
                     QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Minimum
                 )
                 self.checkboxes.append(checkbox)
-
-        container_layout.addStretch(1)
-
-        self.set_hr_line(container_layout)
-        self.set_button(container_layout)
-
-        container.setLayout(container_layout)
-        scroll_area.setWidget(container)
-
-        layout.addWidget(scroll_area)
-        self.setLayout(layout)
+        checkbox_group.addStretch(1)
+        return checkbox_group
 
     def update(self):
         self.list: List[Dict] = []
         self.deller: Deller
         self.initData()
-        self.initUI()
+        self.checkbox_group = self.render_checkbox_list()
+        self.checkbox_group.update()
+        self.container.update()
 
     def get_checked_items(self):
         return [checkbox for checkbox in self.checkboxes if checkbox.isChecked()]
@@ -113,7 +119,7 @@ class SchemaListWidget(QWidget):
             checked_item_ids.append(tmp_id)
             # tmp_schema = self.deller.schema_map_keyby_id[tmp_id]
         if len(checked_item_names) <= 0:
-            self.show_warning("没有要删除的文件...")
+            self.show_warning("文件已删除...")
         print("删除方案 name 列表", checked_item_names)
         print("删除方案 id 列表", checked_item_ids)
         self.deller.delete_by_schema_ids(checked_item_ids)
