@@ -156,10 +156,12 @@ class RimeSchema:
         if len(self.relate_files) <= 0:
             return
         for tmp in self.relate_files:
-            os.remove(tmp)
+            if os.path.isfile(tmp):
+                os.remove(tmp)
         if include_dir:
             for dir in self.relate_dirs:
-                os.removedirs(dir)
+                if os.path.isfile(dir):
+                    os.removedirs(dir)
         pass
 
     def get_schema_nick_name(self) -> str:

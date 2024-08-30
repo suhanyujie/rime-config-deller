@@ -10,6 +10,7 @@ from PyQt6.QtWidgets import (
     QFrame,
     QPushButton,
 )
+from PyQt6.QtGui import QFont
 from ...core.deller import Deller, get_rime_user_dir
 
 
@@ -21,6 +22,7 @@ class SchemaListWidget(QWidget):
         self.list: List[Dict] = []
         self.deller: Deller
         super().__init__(parent)
+        self.msg_box = QLabel(self)
         self.initData()
         self.initUI()
 
@@ -34,6 +36,8 @@ class SchemaListWidget(QWidget):
         layout = QVBoxLayout()
 
         # 添加标题
+        self.show_normal_info()
+        layout.addWidget(self.msg_box)
         layout.addWidget(QLabel("输入法方案列表:"))
 
         # 创建一个滚动区域
@@ -73,6 +77,12 @@ class SchemaListWidget(QWidget):
         layout.addWidget(scroll_area)
         self.setLayout(layout)
 
+    def update(self):
+        self.list: List[Dict] = []
+        self.deller: Deller
+        self.initData()
+        self.initUI()
+
     def get_checked_items(self):
         return [checkbox for checkbox in self.checkboxes if checkbox.isChecked()]
 
@@ -102,6 +112,24 @@ class SchemaListWidget(QWidget):
                 continue
             checked_item_ids.append(tmp_id)
             # tmp_schema = self.deller.schema_map_keyby_id[tmp_id]
+        if len(checked_item_names) <= 0:
+            self.show_warning("没有要删除的文件...")
         print("删除方案 name 列表", checked_item_names)
         print("删除方案 id 列表", checked_item_ids)
+        self.deller.delete_by_schema_ids(checked_item_ids)
+        self.update()
+        pass
+
+    def show_tips(self, msg: str):
+        self.msg_box.setText(msg)
+        pass
+
+    def show_normal_info(self):
+        self.msg_box.setText("Tips: 欢迎使用~")
+        pass
+
+    def show_warning(self, msg: str):
+        self.msg_box.setStyleSheet("color:#cc6633")
+        self.msg_box.setText(msg)
+        self.msg_box.setFont(QFont("Arial", 20))
         pass

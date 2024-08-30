@@ -34,3 +34,7 @@ class TreeView(QTreeView):
         Clearing the TreeView
         """
         self.destroy(destroySubWindows=True)
+
+    def refresh(self) -> None:
+        self.update()
+        pass

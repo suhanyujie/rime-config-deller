@@ -8,9 +8,9 @@ from PyQt6.QtWidgets import (
     QHBoxLayout,
     QTextEdit,
     QToolBar,
+    QToolButton,
 )
 from PyQt6.QtGui import QIcon, QAction
-
 from app.ui.widgets.schema_list_widget import SchemaListWidget
 from ..utils.config import AppConfig
 from .widgets.menubar import MenuBar
@@ -46,11 +46,18 @@ class MainWindow(QMainWindow):
         self.top_toolbar_add_button()
 
         # layout.addWidget(get_separator(self))
-
+        refresh_btn = QToolButton(self)
+        refresh_btn.setText("刷新")
+        layout.addWidget(refresh_btn)
         layout.addWidget(self.treeview)
         layout.addWidget(self.create_rime_list_view())
         # layout.addWidget(self.editbox, stretch=1)
         # layout.addWidget(self.editbox)
+        refresh_btn.triggered.connect(self.refresh_filelist)
+
+    def refresh_filelist(self):
+        self.treeview.refresh()
+        pass
 
     def top_toolbar_add_button(self):
         # 创建并添加新建操作按钮
