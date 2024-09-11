@@ -2,6 +2,8 @@
 
 rime 输入法，额外方案的配置管理（删除）工具
 
+- [](./resources/images/example-delete-1.png)
+
 ## OS
 
 - 目前只支持 win11

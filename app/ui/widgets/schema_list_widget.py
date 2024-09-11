@@ -81,13 +81,14 @@ class SchemaListWidget(QWidget):
         checkbox_group.addStretch(1)
         return checkbox_group
 
-    def update(self):
+    def update_ui(self):
         self.list: List[Dict] = []
         self.deller: Deller
         self.initData()
         self.checkbox_group = self.render_checkbox_list()
         self.checkbox_group.update()
         self.container.update()
+        self.update()
 
     def get_checked_items(self):
         return [checkbox for checkbox in self.checkboxes if checkbox.isChecked()]
@@ -123,7 +124,7 @@ class SchemaListWidget(QWidget):
         print("删除方案 name 列表", checked_item_names)
         print("删除方案 id 列表", checked_item_ids)
         self.deller.delete_by_schema_ids(checked_item_ids)
-        self.update()
+        self.update_ui()
         pass
 
     def show_tips(self, msg: str):
